@@ -198,6 +198,7 @@ In `src/main/resources/application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/focus_guardian
+spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.username=postgres
 spring.datasource.password=admin
 spring.jpa.hibernate.ddl-auto=update
