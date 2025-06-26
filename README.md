@@ -129,9 +129,11 @@ Create a `FocusEntryController` with the following endpoints:
 1. In `application.properties`:
 
 ```properties
+server.port=8086
 spring.datasource.url=jdbc:postgresql://localhost:5432/focus_guardian
+spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.username=postgres
-spring.datasource.password=admin
+spring.datasource.password=add_your_password
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
