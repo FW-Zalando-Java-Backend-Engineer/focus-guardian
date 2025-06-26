@@ -284,6 +284,105 @@ Create `/focus/stats` that returns JSON like:
 
 ---
 
+### 🔹 **Step 11 (Final): Create the Spring Boot Main Application Class**
+
+> 🧠 **Objective:** Define the starting point of your Spring Boot application — where everything begins when you run the project.
+
+---
+
+## 📝 What to Do:
+
+1. Inside your base package `com.example.focusguardian`, create a new Java class:
+
+**Class Name:** `FocusGuardianApplication`
+
+2. Add the required annotations and `main()` method to launch the Spring Boot app.
+
+---
+
+## 💡 Hints and Explanations:
+
+---
+
+### 📁 📌 Where should I place this class?
+
+Put it inside:
+
+```
+src/main/java/com/example/focusguardian/FocusGuardianApplication.java
+```
+
+This should be in the **same package or above all other packages** (like `model`, `repo`, `web`). Why?
+
+> ✅ Because Spring Boot uses `@ComponentScan` to look for all components starting from the package where your main class lives.
+> Placing it at the root ensures **everything gets auto-discovered**.
+
+---
+
+### 🧱 What should be inside this class?
+
+Your main class should:
+
+* Be marked with `@SpringBootApplication` (required for auto-configuration).
+* Have a `main(String[] args)` method to start the app using `SpringApplication.run(...)`.
+
+---
+
+### 🔍 What does `@SpringBootApplication` do?
+
+It’s a **shortcut for three annotations**:
+
+```java
+@Configuration          // Marks this class as a configuration source
+@EnableAutoConfiguration // Enables Spring Boot's auto-config logic
+@ComponentScan           // Automatically scans this package and subpackages
+```
+
+Together, they:
+
+* Register your controller, entity, and repository
+* Connect to the database
+* Start the embedded web server (Tomcat)
+
+---
+
+### ✅ Final Code (What It Should Look Like):
+
+```java
+package com.example.focusguardian;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * 🚀 This is the main entry point of your Spring Boot app.
+ * It launches everything: web server, database connections, and all Spring components.
+ */
+@SpringBootApplication
+public class FocusGuardianApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(FocusGuardianApplication.class, args);
+    }
+}
+```
+
+---
+
+### 🧪 After You Create This Class:
+
+* ✅ Right-click the file → Run `FocusGuardianApplication.main()`
+* You should see output like:
+
+  ```
+  Tomcat started on port(s): 8080
+  Started FocusGuardianApplication in 2.345 seconds
+  ```
+
+That means your application is up and running 🎉
+
+---
+
 ## ✨ Bonus Challenges (Optional)
 
 * Filter entries: `/focus/success` and `/focus/failure`
