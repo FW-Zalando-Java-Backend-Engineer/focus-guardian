@@ -43,158 +43,251 @@ Create a new Spring Boot Maven project **manually** (no Spring Initializr).
 
 ## 📋 Assignment Requirements
 
+### ✅ Step-by-Step Assignment (with Hints)
+
+### 🔹 **Step 1: Create a Maven Project**
+
+> **Objective:** Set up a blank Spring Boot project manually.
+
+#### 📝 What to do:
+
+* Open IntelliJ → New Project → Maven
+* GroupId: `com.example`
+* ArtifactId: `focus-guardian`
+* Name: `focus-guardian`
+* Java version: 17+
+
+#### 💡 Hints:
+
+* You’re creating this **without Spring Initializr** on purpose — this builds confidence in manual setups.
+* Choose Maven, not Gradle, to match instructions.
+* Once created, check for `pom.xml` and `src/main/java`.
+
 ---
 
-### ✅ Step 1: Set Up the Project
+### 🔹 **Step 2: Configure `pom.xml`**
 
-* Create a new **Maven** project in IntelliJ called `focus-guardian`
-* Package name: `com.example.focusguardian`
+> **Objective:** Add dependencies and plugins for Spring Boot and PostgreSQL.
+
+#### 📝 What to do:
+
+* Replace your existing `pom.xml` with one that includes:
+
+  * Spring Boot starter parent
+  * `spring-boot-starter-web`
+  * `spring-boot-starter-data-jpa`
+  * PostgreSQL JDBC driver
+  * Spring Boot Maven plugin
+
+#### 💡 Hints:
+
+* Don’t forget the `<parent>` section for Spring Boot — this gives you auto-version management.
+* `spring-boot-starter-web` adds support for `@RestController`, `@RequestMapping`, etc.
+* `spring-boot-starter-data-jpa` enables working with databases using Java classes (ORM).
+* PostgreSQL dependency gives your app the "driver" it needs to talk to the database.
+* After updating `pom.xml`, click **Maven > Reload** in IntelliJ.
 
 ---
 
-### ✅ Step 2: Add Dependencies to `pom.xml`
+### 🔹 **Step 3: Create Package Structure**
 
-Include:
+> **Objective:** Organize code into logical layers.
 
-* Spring Boot starter parent
-* `spring-boot-starter-web`
-* `spring-boot-starter-data-jpa`
-* PostgreSQL JDBC driver
-* Spring Boot Maven plugin
+#### 📝 What to do:
 
----
-
-### ✅ Step 3: Package Structure
-
-Create this structure:
+Under `src/main/java/com/example/focusguardian`, create:
 
 ```
-com.example.focusguardian
-├── model         # FocusEntry entity
-├── repo          # FocusEntryRepository
-├── web           # FocusEntryController
+model       # Holds the FocusEntry class
+repo        # Holds the interface for database operations
+web         # Holds the REST controller
 ```
 
----
+#### 💡 Hints:
 
-### ✅ Step 4: Create the `FocusEntry` Entity
-
-Your data class should represent this structure:
-
-| Field       | Type          | Description                             |
-| ----------- | ------------- | --------------------------------------- |
-| `id`        | Long          | Primary key, auto-generated             |
-| `reason`    | String        | What helped the user stay focused       |
-| `status`    | Boolean       | true = success, false = gave in         |
-| `createdAt` | LocalDateTime | When the entry was submitted (auto-set) |
-
-👉 Use JPA annotations: `@Entity`, `@Id`, `@GeneratedValue`, etc.
-👉 Use `@PrePersist` to auto-set `createdAt` when saving.
+* Right-click the package and choose `New > Package`.
+* Keep names lowercase.
+* This mirrors **MVC layering**: `model`, `controller`, `data`.
 
 ---
 
-### ✅ Step 5: Create the Repository
+### 🔹 **Step 4: Create the `FocusEntry` Entity**
 
-Create an interface that extends `CrudRepository<FocusEntry, Long>`.
-No methods needed yet — you'll use inherited ones like:
+> **Objective:** Create the Java class that maps to your PostgreSQL table.
 
-* `save()`
-* `findById()`
-* `findAll()`
-* `count()`
+#### 📝 What to do:
+
+* Fields:
+
+  * `Long id`
+  * `String reason`
+  * `Boolean status`
+  * `LocalDateTime createdAt`
+
+* Use JPA annotations:
+
+  * `@Entity`
+  * `@Id`
+  * `@GeneratedValue`
+  * `@Column`
+  * `@PrePersist` to set `createdAt`
+
+#### 💡 Hints:
+
+* `@Entity` = “This Java class becomes a database table.”
+* `@Id` and `@GeneratedValue` = auto-increment ID
+* `@PrePersist` = method that runs before saving to DB
+
+  ```java
+  @PrePersist
+  protected void onCreate() {
+      createdAt = LocalDateTime.now();
+  }
+  ```
 
 ---
 
-### ✅ Step 6: Create the Controller
+### 🔹 **Step 5: Create the Repository**
 
-Create a `FocusEntryController` with the following endpoints:
+> **Objective:** Create a simple interface to access the database.
 
-| Endpoint       | Method | Purpose                           |
-| -------------- | ------ | --------------------------------- |
-| `/focus`       | POST   | Add a new focus entry             |
-| `/focus/{id}`  | GET    | View one entry                    |
-| `/focus`       | GET    | View all entries                  |
-| `/focus/stats` | GET    | Show total entries + success rate |
+#### 📝 What to do:
 
-🔁 Use:
+* Create `FocusEntryRepository.java` in `repo`
+* Extend `CrudRepository<FocusEntry, Long>`
 
-* `@RestController`
-* `@RequestMapping("/focus")`
-* `@PostMapping`, `@GetMapping`, `@PathVariable`, `@RequestBody`
+#### 💡 Hints:
+
+* No implementation needed — Spring generates it automatically.
+* You can now use `.save()`, `.findAll()`, `.findById()`, `.deleteById()`.
 
 ---
 
-### ✅ Step 7: Configure PostgreSQL
+### 🔹 **Step 6: Create the REST Controller**
 
-1. In `application.properties`:
+> **Objective:** Create endpoints to submit and retrieve focus entries.
+
+#### 📝 What to do:
+
+* Create `FocusEntryController.java` in `web`
+* Map it to `/focus`
+* Add endpoints:
+
+  * `POST /focus` to submit entry
+  * `GET /focus/{id}` to get one entry
+  * `GET /focus` to list all entries
+  * `GET /focus/stats` for analytics
+
+#### 💡 Hints:
+
+* Annotate with `@RestController` and `@RequestMapping("/focus")`
+* Use `@PostMapping`, `@GetMapping`
+* Inject the repository using constructor injection
+* Use `@RequestBody` to accept JSON input
+* Use `@PathVariable` to extract ID from the URL
+
+---
+
+### 🔹 **Step 7: Configure PostgreSQL in `application.properties`**
+
+> **Objective:** Replace H2 with PostgreSQL
+
+#### 📝 What to do:
+
+In `src/main/resources/application.properties`:
 
 ```properties
-server.port=8086
 spring.datasource.url=jdbc:postgresql://localhost:5432/focus_guardian
-spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.username=postgres
-spring.datasource.password=add_your_password
+spring.datasource.password=admin
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 ```
 
-2. In `psql`, create the DB:
+#### 💡 Hints:
+
+* `ddl-auto=update` means Spring will create or update the `focus_entry` table automatically.
+* Make sure the DB name in the URL matches what you created in PostgreSQL.
+* Password must match what you set during PostgreSQL installation.
+
+---
+
+### 🔹 **Step 8: Create the PostgreSQL Database**
+
+> **Objective:** Set up the actual database using `psql` CLI
+
+#### 📝 What to do:
 
 ```bash
 psql -U postgres
 CREATE DATABASE focus_guardian;
+\q
 ```
+
+#### 💡 Hints:
+
+* You don’t need to create tables — Hibernate will do it automatically on first app start.
+* If you get a connection error, double-check port (usually 5432), username, and password.
 
 ---
 
-### ✅ Step 8: Test the App
+### 🔹 **Step 9: Test the Application Using Postman**
 
-Use **Postman** or `curl`:
+> **Objective:** Verify the API works
 
-* Submit a new entry:
+#### 📝 What to do:
+
+* Send a `POST /focus` request with:
 
 ```json
 {
-  "reason": "I put my phone on airplane mode and finished my math homework",
+  "reason": "Put my phone on airplane mode during study time",
   "status": true
 }
 ```
 
-* Get all entries
-* Try submitting a few `false` ones too (user gave in)
+* Try `GET /focus/1` to view that entry
+* Try `GET /focus` to view all entries
+
+#### 💡 Hints:
+
+* Use headers: `Content-Type: application/json`
+* IDs are auto-generated (start from 1)
+* Status can be `true` or `false`
 
 ---
 
-## 📊 Step 9: Add Analytics Endpoint
+### 🔹 **Step 10: Add Analytics Endpoint**
+
+> **Objective:** Help Liam see how he’s doing with a success rate summary.
+
+#### 📝 What to do:
 
 Create `/focus/stats` that returns JSON like:
 
 ```json
 {
-  "total": 6,
-  "successes": 4,
+  "total": 5,
+  "successes": 3,
   "failures": 2,
-  "successRate": 66.67
+  "successRate": 60.0
 }
 ```
 
-Implement it by:
+#### 💡 Hints:
 
-* Calling `findAll()`
-* Filtering `status=true`
-* Calculating the percentage
+* Use `.findAll()` to get the list
+* Use Java Stream to count `true` and `false` statuses
+* `successRate = (successes / total) * 100`
 
 ---
 
-## ✨ Bonus Features (Optional)
+## ✨ Bonus Challenges (Optional)
 
-| Feature                           | Idea                                 |
-| --------------------------------- | ------------------------------------ |
-| Filter entries by success/failure | `/focus/success` or `/focus/failure` |
-| Add optional tag/category field   | e.g., `"studying"`, `"family time"`  |
-| Add a weekly summary view         | Future `@Scheduled` extension        |
-| Add user authentication           | For future expansion                 |
+* Filter entries: `/focus/success` and `/focus/failure`
+* Add a `category` field (`study`, `family`, `health`)
+* Add sorting or pagination
 
 ---
 
